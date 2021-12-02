@@ -1,0 +1,94 @@
+<html>
+    <body>
+        <input id="login">
+        <label for="login">Login</label>
+        <br>
+        <input id="password">
+        <label for="password">Hasło</label>
+        <br>
+        <label id="loginWithPassword"></label>
+        <br>
+
+        <button onclick="addPassword()">
+            Dodaj hasło
+        </button>
+        <button onclick="removePassword()">
+            Usuń hasło
+        </button>
+        <br>
+        <button onclick="getPassword()">
+            Czytaj hasło
+        </button>
+        <button onclick="showLoginPrompt()">
+            Zaloguj
+        </button>
+    </body>
+
+    <script>
+        var isLoggedIn = false;
+        const password = 'password';
+
+        function addPassword() {
+            if(!isLoggedIn) {
+                return;
+            }
+            
+            let login = document.getElementById('login').value;
+            let password = document.getElementById('password').value;
+            let encryptedPassword = encryptPassword(password);
+            localStorage.setItem(login, encryptedPassword);
+        }
+
+        function getPassword() {
+            if(!isLoggedIn) {
+                return;
+            }
+
+            let login = document.getElementById('login').value;
+            let password = localStorage.getItem(login);
+            let decryptedPassword = decryptPassword(password);
+            document.getElementById('loginWithPassword').innerHTML = login + ' ' + decryptedPassword;
+        }
+
+        function removePassword() {
+            if(!isLoggedIn) {
+                return;
+            }
+
+            let login = document.getElementById('login').value;
+            localStorage.removeItem(login);
+        }
+
+        function showLoginPrompt() {
+            let insert = window.prompt('Podaj hasło');
+            if(password == insert) {
+                isLoggedIn = true;
+            }
+            setTimeout(
+                function() {
+                    isLoggedIn = false;
+                    document.getElementById('loginWithPassword').innerHTML = '';
+                    showLoginPrompt();
+                }, 
+                300000);
+        }
+
+        function encryptPassword(passwordToEncrypt) {
+            let encryptedPassword = '';
+            for (var i = 0; i < passwordToEncrypt.length; i++) {
+                encryptedPassword += String.fromCharCode((passwordToEncrypt[i].charCodeAt() + 5));
+            }
+            return encryptedPassword;
+        }
+
+        function decryptPassword(passwordToDecrypt) {
+            let decryptedPassword = '';
+            for (var i = 0; i < passwordToDecrypt.length; i++) {
+                decryptedPassword += String.fromCharCode((passwordToDecrypt[i].charCodeAt() - 5));
+            }
+            return decryptedPassword;
+        }
+
+        showLoginPrompt();
+    </script>
+</html>
